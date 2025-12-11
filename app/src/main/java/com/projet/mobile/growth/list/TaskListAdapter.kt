@@ -9,11 +9,7 @@ import com.projet.mobile.growth.R
 
 class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>() {
 
-    private val taskList = listOf(
-        Task(id = "id_1", title = "Task 1", description = "description 1"),
-        Task(id = "id_2", title = "Task 2"),
-        Task(id = "id_3", title = "Task 3")
-    )
+    var currentList: List<Task> = emptyList()
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -26,11 +22,11 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>() {
         holder: TaskViewHolder,
         position: Int
     ) {
-        holder.bind(taskList[position])
+        holder.bind(currentList[position])
     }
 
     override fun getItemCount(): Int {
-        return taskList.size
+        return currentList.size
     }
 
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
