@@ -11,12 +11,10 @@ import com.projet.mobile.growth.R
 import java.util.UUID
 
 class TaskListFragment : Fragment() {
-
-    private var taskList = listOf(
-        Task(id = "id_1", title = "Task 1", description = "description 1"),
-        Task(id = "id_2", title = "Task 2"),
-        Task(id = "id_3", title = "Task 3")
-    )
+    
+    private var taskList = List(100) { index ->
+        Task(id = "id_$index", title = "Task $index")
+    }
     private val adapter = TaskListAdapter()
 
     override fun onCreateView(
@@ -25,7 +23,7 @@ class TaskListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_task_list, container, false)
-        adapter.currentList = taskList
+        adapter.submitList(taskList)
         return rootView
     }
 
@@ -41,7 +39,7 @@ class TaskListFragment : Fragment() {
     }
 
     fun refreshAdapter(a: TaskListAdapter, newList: List<Task>) {
-        a.currentList = newList
+        a.submitList(newList)
         a.notifyDataSetChanged()
     }
 }
