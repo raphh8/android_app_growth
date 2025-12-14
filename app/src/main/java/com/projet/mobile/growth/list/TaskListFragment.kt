@@ -45,6 +45,11 @@ class TaskListFragment : Fragment() {
             adapter.submitList(taskList)
             binding.recycler.scrollToPosition(taskList.size - 1)
         }
+
+        adapter.onClickDelete = { taskToDelete ->
+            taskList = taskList.filter { it.id != taskToDelete.id }
+            adapter.submitList(taskList)
+        }
     }
 
     override fun onDestroyView() {
