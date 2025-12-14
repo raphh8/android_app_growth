@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.projet.mobile.growth.R
-import com.projet.mobile.growth.list.Task
+import com.projet.mobile.growth.databinding.ItemTaskBinding
 
 object TasksDiffCallback : DiffUtil.ItemCallback<Task>() {
     override fun areItemsTheSame(oldTask: Task, newTask: Task): Boolean {
@@ -24,22 +24,22 @@ class TaskListAdapter :
     ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TasksDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_task, parent, false)
-        return TaskViewHolder(itemView)
+        val binding = ItemTaskBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return TaskViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: Task) {
-            val iTitle = itemView.findViewById<TextView>(R.id.task_title)
-            val iDesc = itemView.findViewById<TextView>(R.id.task_desc)
-
-            iTitle.text = task.title
-            iDesc.text = task.description
+            binding.taskTitle.text = task.title
+            binding.taskDesc.text = task.description
         }
     }
 }
