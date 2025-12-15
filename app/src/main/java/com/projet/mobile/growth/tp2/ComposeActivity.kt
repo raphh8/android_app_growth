@@ -1,5 +1,6 @@
 package com.projet.mobile.growth.tp2
 
+import android.R
 import android.R.attr.name
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,6 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -71,7 +75,7 @@ fun ListScreen(modifier: Modifier = Modifier) {
                 val newItem = Task(id = UUID.randomUUID().toString(), title = "Item #${items.size}")
                 items = items + newItem
                 coroutineScope.launch { listState.animateScrollToItem(index = items.size - 1) }
-            }) {
+            }, containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.secondary) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
             }
         }
@@ -85,9 +89,17 @@ fun ListScreen(modifier: Modifier = Modifier) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             items(items) { task ->
-                Column {
-                    Text(text = task.title, color = MaterialTheme.colorScheme.primary)
-                    Text(text = task.description, color = MaterialTheme.colorScheme.secondary)
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column {
+                        Text(text = task.title, color = MaterialTheme.colorScheme.primary)
+                        Text(text = task.description, color = MaterialTheme.colorScheme.secondary)
+                    }
+                    FloatingActionButton(onClick = {
+                        items = items.filter { it.id != task.id }
+                    }, containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.secondary)
+                    {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+                    }
                 }
             }
         }
