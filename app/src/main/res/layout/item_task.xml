@@ -28,10 +28,15 @@
 
     <!-- Delete button -->
     <ImageButton
+        android:id="@+id/edit_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_edit" />
+
+    <ImageButton
         android:id="@+id/del_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Delete"
         app:srcCompat="@android:drawable/ic_menu_delete" />
 
 </LinearLayout>

@@ -17,10 +17,8 @@ object TasksDiffCallback : DiffUtil.ItemCallback<Task>() {
     }
 }
 
-class TaskListAdapter :
+class TaskListAdapter(val listener: TaskListListener) :
     ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TasksDiffCallback) {
-
-    var onClickDelete: (Task) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val binding = ItemTaskBinding.inflate(
@@ -42,7 +40,11 @@ class TaskListAdapter :
             binding.taskDesc.text = task.description
 
             binding.delTask.setOnClickListener {
-                onClickDelete(task)
+                listener.onClickDelete(task)
+            }
+
+            binding.editTask.setOnClickListener {
+                listener.onClickEdit(task)
             }
         }
 

@@ -16,7 +16,20 @@ class TaskListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var taskList = emptyList<Task>()
-    private val adapter = TaskListAdapter()
+
+    val adapterListener : TaskListListener = object : TaskListListener {
+        override fun onClickDelete(task: Task) {
+            taskList = taskList.filter { it.id != task.id }
+            adapter.submitList(taskList)
+        }
+        override fun onClickEdit(task: Task) {
+            parentFragmentManager.commit {
+                replace(R.id.fragment_container, DetailFragment(task))
+                addToBackStack(null)
+            }
+        }
+    }
+    val adapter = TaskListAdapter(adapterListener)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,22 +50,29 @@ class TaskListFragment : Fragment() {
             viewLifecycleOwner
         ) { _, bundle ->
             val task = bundle.getSerializable(DetailFragment.RESULT_KEY) as Task?
-            task?.let {
-                taskList = taskList + it
-                adapter.submitList(taskList)
-                binding.recycler.scrollToPosition(taskList.size - 1)
+            val index = taskList.indexOfFirst { it.id == task!!.id }
+            if (index == -1) {
+                task?.let {
+                    taskList = taskList + it
+                    adapter.submitList(taskList)
+                    binding.recycler.scrollToPosition(taskList.size - 1)
+                }
+            } else {
+                task?.let {
+                    taskList = taskList.map { t ->
+                        if (t.id == it.id) it else t
+                    }
+                    adapter.submitList(taskList)
+                }
             }
+
         }
+
         binding.addTask.setOnClickListener {
             parentFragmentManager.commit {
                 replace<DetailFragment>(R.id.fragment_container)
                 addToBackStack(null)
             }
-        }
-
-        adapter.onClickDelete = { taskToDelete ->
-            taskList = taskList.filter { it.id != taskToDelete.id }
-            adapter.submitList(taskList)
         }
     }
 

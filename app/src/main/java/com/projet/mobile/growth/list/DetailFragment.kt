@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.projet.mobile.growth.databinding.FragmentDetailBinding
 import java.util.UUID
 
-class DetailFragment : Fragment() {
+class DetailFragment(var task: Task? = null) : Fragment() {
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
@@ -16,7 +16,7 @@ class DetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
@@ -24,26 +24,35 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        task?.let {
+            binding.editTitle.setText(it.title)
+            binding.editDesc.setText(it.description)
+        }
+
         binding.detailSubmit.setOnClickListener {
 
             val title = binding.editTitle.text.toString()
             val description = binding.editDesc.text.toString()
 
-            if (title.isBlank()) return@setOnClickListener
-
-            val newTask = Task(
-                id = UUID.randomUUID().toString(),
-                title = title,
-                description = description
-            )
+            val resultTask = if (task != null) {
+                task!!.apply {
+                    this.title = title
+                    this.description = description
+                }
+            } else {
+                Task(
+                    id = UUID.randomUUID().toString(),
+                    title = title,
+                    description = description
+                )
+            }
 
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
                 Bundle().apply {
-                    putSerializable(RESULT_KEY, newTask)
+                    putSerializable(RESULT_KEY, resultTask)
                 }
             )
-
             parentFragmentManager.popBackStack()
         }
     }
