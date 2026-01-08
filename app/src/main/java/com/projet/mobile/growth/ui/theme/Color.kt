@@ -1,4 +1,4 @@
-package com.projet.mobile.growth.ui
+package com.projet.mobile.growth.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,5 +1,13 @@
 package com.projet.mobile.growth.list
-
+import kotlinx.serialization.SerialName
 import java.io.Serializable
 
-data class Task(val id: String, var title: String, var description: String = "You can add your own description!") : Serializable
+@kotlinx.serialization.Serializable
+data class Task(
+    @SerialName("id")
+    val id: String,
+    @SerialName("title")
+    var title: String,
+    @SerialName("description")
+    var description: String? = "You can add your own description!"
+) : Serializable

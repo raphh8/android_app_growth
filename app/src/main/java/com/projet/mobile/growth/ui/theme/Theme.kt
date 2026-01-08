@@ -1,9 +1,10 @@
-package com.projet.mobile.growth.ui
+package com.projet.mobile.growth.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import com.projet.mobile.growth.ui.theme.Typography
 
 private val LightColorScheme = lightColorScheme(
     primary = ThemePrimary,
@@ -19,7 +20,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun TodoTheme(
+fun GrowthTheme(
     darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -27,7 +28,7 @@ fun TodoTheme(
 
     MaterialTheme(
         colorScheme = colors,
-        typography = TodoTypography,
+        typography = Typography,
         content = content
     )
 }
