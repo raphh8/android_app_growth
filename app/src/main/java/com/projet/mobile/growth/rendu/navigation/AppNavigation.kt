@@ -121,6 +121,7 @@ fun AppNavigation(vm: Lazy<AppViewModel>) {
                 HomeScreen(
                     navController = navController,
                     weekPlan = weekPlan,
+                    onDel = { toDel, day -> vm.value.removeTrainingFromDay(toDel, day) }
                 )
             }
 
