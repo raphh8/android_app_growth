@@ -9,4 +9,10 @@ data class Exercise(
     val name: String,
     @SerialName("gifUrl")
     val gif: String,
+    @SerialName("repNumber")
+    val repNumber: Int? = null,
+    @SerialName("setNumber")
+    val setNumber: Int? = null,
+    @SerialName("weight")
+    val weight: Int? = null
 )

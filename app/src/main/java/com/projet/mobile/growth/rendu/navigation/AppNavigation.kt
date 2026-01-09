@@ -20,11 +20,13 @@ import androidx.navigation3.runtime.NavKey
 import com.projet.mobile.growth.rendu.views.ChronoScreen
 import com.projet.mobile.growth.rendu.views.HomeScreen
 import com.projet.mobile.growth.rendu.views.SearchScreen
-import com.projet.mobile.growth.rendu.viewModel.TrainingViewModel
+import com.projet.mobile.growth.rendu.viewModel.AppViewModel
 import com.projet.mobile.growth.rendu.views.AddActivityScreen
 import com.projet.mobile.growth.rendu.views.AddTrainingScreen
 import com.projet.mobile.growth.rendu.views.TrainingsScreen
 import kotlinx.serialization.Serializable
+import androidx.compose.runtime.collectAsState
+
 
 @Serializable data object Home : NavKey
 @Serializable data object Search : NavKey
@@ -37,8 +39,11 @@ import kotlinx.serialization.Serializable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppNavigation(vm: Lazy<TrainingViewModel>) {
+fun AppNavigation(vm: Lazy<AppViewModel>) {
     val navController = rememberNavController()
+    val weekPlan by vm.value.weeklyPlan.collectAsState()
+    val trainings by vm.value.trainings.collectAsState()
+
 
     Scaffold(
         topBar = {
@@ -115,7 +120,7 @@ fun AppNavigation(vm: Lazy<TrainingViewModel>) {
             composable<Home> {
                 HomeScreen(
                     navController = navController,
-                    weekPlan = vm.value.weeklyPlan,
+                    weekPlan = weekPlan,
                 )
             }
 
@@ -129,7 +134,7 @@ fun AppNavigation(vm: Lazy<TrainingViewModel>) {
 
             composable<Trainings> {
                 TrainingsScreen(
-                    list = vm.value.trainings,
+                    list = trainings,
                     navController = navController,
                     onDelete = { toDel -> vm.value.deleteTraining(toDel) },
                 )
@@ -144,10 +149,10 @@ fun AppNavigation(vm: Lazy<TrainingViewModel>) {
 
             composable<AddActivity> { backStackEntry ->
                 AddActivityScreen(
-                    list = vm.value.trainings,
+                    list = trainings,
                     navController = navController,
                     onSave = {
-                        vm.value.addTrainingToDay(
+                        vm.value.addTrainingsToDay(
                             it,
                             backStackEntry.arguments?.getInt("day") ?: 0
                         )

@@ -1,38 +1,78 @@
 package com.projet.mobile.growth.rendu.viewModel
 
+import com.projet.mobile.growth.rendu.data.AppDB
+import com.projet.mobile.growth.rendu.data.entity.WeeklyPlanEntity
+import com.projet.mobile.growth.rendu.data.toEntity
+import com.projet.mobile.growth.rendu.data.toModel
 import com.projet.mobile.growth.rendu.model.Training
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlin.collections.map
 
-class AppRepository {
-    private var trainingList = mutableListOf<Training>()
-    private val weeklyPlan: MutableMap<Int, MutableList<Training>> = (0..6).associateWith { mutableListOf<Training>() }.toMutableMap()
+class AppRepository(
+    private val db: AppDB
+) {
 
+    fun getTrainings(): Flow<List<Training>> {
+        return db.trainingDao()
+            .getAllTrainings()
+            .map { trainingEntities ->
+                trainingEntities.map { entity ->
+                    val exercises = db.exerciseDao()
+                        .getExercisesForTraining(entity.id)
+                        .map { it.toModel() }
 
-
-    fun getTrainingList(): List<Training> {
-        return trainingList
+                    entity.toModel(exercises)
+                }
+            }
     }
 
-    fun addTraining(training: Training) {
-        trainingList.add(training)
+    suspend fun addTraining(training: Training) {
+        db.trainingDao().insertTraining(training.toEntity())
+
+        db.exerciseDao().insertExercises(
+            training.exercises.map { it.toEntity(training.id) }
+        )
     }
 
-    fun deleteTraining(training: Training) {
-        trainingList.remove(training)
-        weeklyPlan.values.forEach { it.remove(training) }
+    suspend fun deleteTraining(training: Training) {
+        db.trainingDao().deleteTraining(training.toEntity())
+        db.weeklyPlanDao().deleteTrainingFromWeek(training.id)
     }
 
-    fun getWeeklyPlan(): Map<Int, List<Training>> =
-        weeklyPlan.mapValues { it.value.toList() }
+    suspend fun getWeeklyPlan(): Map<Int, List<Training>> {
+        val result = mutableMapOf<Int, List<Training>>()
 
-    fun getTrainingsForDay(day: Int): List<Training> =
-        weeklyPlan[day]?.toList().orEmpty()
+        (0..6).forEach { day ->
+            val trainingIds = db.weeklyPlanDao()
+                .getTrainingsForDay(day)
+                .map { it.trainingId }
 
-    fun addTrainingToDay(training: Training, day: Int) {
-        weeklyPlan[day]?.add(training)
+            val trainingsForDay = trainingIds.mapNotNull { id ->
+                db.trainingDao().getTrainingById(id)?.let { entity ->
+                    val exercises = db.exerciseDao()
+                        .getExercisesForTraining(id)
+                        .map { it.toModel() }
+
+                    entity.toModel(exercises)
+                }
+            }
+
+            result[day] = trainingsForDay
+        }
+
+        return result
     }
 
-    fun removeTrainingFromDay(training: Training, day: Int) {
-        weeklyPlan[day]?.remove(training)
+    suspend fun addTrainingsToDay(trainings: List<Training>, day: Int) {
+        db.weeklyPlanDao().insertWeeklyPlan(
+            trainings.map {
+                WeeklyPlanEntity(day = day, trainingId = it.id)
+            }
+        )
     }
 
+    suspend fun removeTrainingFromDay(training: Training, day: Int) {
+        db.weeklyPlanDao().removeTrainingFromDay(training.id, day)
+    }
 }

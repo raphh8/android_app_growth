@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,7 +28,7 @@ import com.projet.mobile.growth.rendu.navigation.AddTraining
 
 @Composable
 fun TrainingsScreen(
-    list: SnapshotStateList<Training>,
+    list: List<Training>,
     navController: NavController,
     onDelete: (trainingToDel: Training) -> Unit,
 ) {
@@ -45,17 +44,17 @@ fun TrainingsScreen(
         }
     ) { innerPadding ->
         LazyColumn(Modifier.padding(innerPadding)) {
-        items(count = list.toList().count()){
+        items(count = list.count()){
             index->
             Column {
                 Row (modifier = Modifier.fillMaxWidth().border(1.dp, MaterialTheme.colorScheme.secondary).padding(10.dp)){
                     Column(modifier = Modifier.fillMaxWidth(0.7f)) {
-                        Text(fontSize = 20.sp, text = list.toList()[index].title )
+                        Text(fontSize = 20.sp, text = list[index].title )
                         Spacer(Modifier.height(10.dp))
-                        Text(fontSize = 20.sp, text = list.toList()[index].timeEstimation)
+                        Text(fontSize = 20.sp, text = list[index].timeEstimation)
                     }
                     IconButton(onClick = {
-                        onDelete(list.toList()[index])
+                        onDelete(list[index])
                     }) {
                         Icon(imageVector = Icons.Default.Delete,
                             contentDescription = "Delete")

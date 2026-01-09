@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import com.projet.mobile.growth.rendu.model.Training
 import com.projet.mobile.growth.rendu.navigation.AddActivity
 import com.projet.mobile.growth.rendu.navigation.AddTraining
+import com.projet.mobile.growth.rendu.notifications.NotificationScheduler
 import java.util.UUID
 import kotlin.collections.plus
 
