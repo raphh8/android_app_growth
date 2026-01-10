@@ -1,8 +1,10 @@
 package com.projet.mobile.growth.rendu.views
 
 import android.os.Build.VERSION.SDK_INT
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -18,7 +20,9 @@ import com.projet.mobile.growth.rendu.data.Exercise
 import com.projet.mobile.growth.rendu.data.ExerciseAPI
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(
+    onExerciseClick: (Exercise) -> Unit
+) {
     val imageLoader = ImageLoader.Builder(LocalContext.current)
         .components {
             if (SDK_INT >= 28) {
@@ -73,13 +77,30 @@ fun SearchScreen() {
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(searchResults?.size ?: 0) {
-                Text(text = searchResults?.get(it)?.name ?: "")
-                AsyncImage(
-                    imageLoader = imageLoader,
-                    model = searchResults?.get(it)?.gif,
-                    contentDescription = "Exercise GIF",
-                )
+            items(searchResults ?: emptyList()) { exercise ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onExerciseClick(exercise)
+                        },
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            text = exercise.name,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        AsyncImage(
+                            imageLoader = imageLoader,
+                            model = exercise.gif,
+                            contentDescription = "Exercise GIF",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp)
+                        )
+                    }
+                }
             }
         }
     }

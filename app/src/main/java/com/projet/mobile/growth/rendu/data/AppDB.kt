@@ -10,7 +10,6 @@ import com.projet.mobile.growth.rendu.data.dao.WeeklyPlanDAO
 import com.projet.mobile.growth.rendu.data.entity.ExerciseEntity
 import com.projet.mobile.growth.rendu.data.entity.TrainingEntity
 import com.projet.mobile.growth.rendu.data.entity.WeeklyPlanEntity
-import kotlin.jvm.java
 
 @Database(
     entities = [
@@ -34,8 +33,9 @@ abstract class AppDB : RoomDatabase() {
                 INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDB::class.java,
-                    "sport_app_db"
-                ).build().also { INSTANCE = it }
+                    "growth_app_db"
+                )
+                .build().also { INSTANCE = it }
             }
     }
 }

@@ -26,6 +26,7 @@ import com.projet.mobile.growth.rendu.views.AddTrainingScreen
 import com.projet.mobile.growth.rendu.views.TrainingsScreen
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
+import com.projet.mobile.growth.rendu.views.ExerciseDetailsScreen
 
 
 @Serializable data object Home : NavKey
@@ -34,7 +35,7 @@ import androidx.compose.runtime.collectAsState
 @Serializable data object Trainings : NavKey
 
 @Serializable data class AddActivity(val day: Int) : NavKey
-@Serializable data class ExerciseDetails(val id: String) : NavKey
+@Serializable data class ExerciseDetails(val id : String) : NavKey
 @Serializable data object AddTraining : NavKey
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,7 +127,11 @@ fun AppNavigation(vm: Lazy<AppViewModel>) {
             }
 
             composable<Search> {
-                SearchScreen()
+                SearchScreen(
+                    onExerciseClick = {
+                        navController.navigate(ExerciseDetails(it.id))
+                    }
+                )
             }
 
             composable<Chrono> {
@@ -158,6 +163,13 @@ fun AppNavigation(vm: Lazy<AppViewModel>) {
                             backStackEntry.arguments?.getInt("day") ?: 0
                         )
                     }
+                )
+            }
+
+            composable<ExerciseDetails> { backStackEntry ->
+                ExerciseDetailsScreen(
+                    exerciseId = backStackEntry.arguments?.getString("id") ?: "",
+                    navController = navController
                 )
             }
         }

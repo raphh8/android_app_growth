@@ -18,6 +18,7 @@ import androidx.room.PrimaryKey
 data class ExerciseEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val trainingId: String,
+    val exerciseId: String,
     val name: String,
     val gif: String,
     val repNumber: Int?,
