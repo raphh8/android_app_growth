@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.projet.mobile.growth.rendu.model.Training
-import com.projet.mobile.growth.rendu.notifications.NotificationScheduler
 
 @Composable
 fun AddActivityScreen(

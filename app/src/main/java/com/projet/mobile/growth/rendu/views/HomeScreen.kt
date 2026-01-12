@@ -3,12 +3,15 @@ package com.projet.mobile.growth.rendu.views
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,25 +25,28 @@ fun HomeScreen(
     navController: NavController,
     onDel: (Training, Int) -> Unit
 ) {
+    val expandedMap = remember { mutableStateMapOf<String, Boolean>() }
     val weeks = listOf("Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche")
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(16.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        items(7) { weekIndex ->
+        itemsIndexed(weeks) { weekIndex, weekName ->
             Card(
                 shape = RoundedCornerShape(12.dp),
                 //elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = weeks[weekIndex],
+                    text = weekName,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.padding(all = 8.dp)
                 )
                 weekPlan[weekIndex]?.forEach { training ->
+                    val isExpanded = expandedMap[training.id] ?: false
+
                     Card(
                         shape = RoundedCornerShape(12.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -78,6 +84,17 @@ fun HomeScreen(
                                     contentDescription = "Delete"
                                 )
                             }
+                        }
+                        FilledTonalButton(
+                            modifier = Modifier.padding(4.dp),
+                            onClick = {
+                                expandedMap[training.id] = !isExpanded
+                            }
+                        ) {
+                            Text(if(isExpanded) "Cacher" else "Voir plus")
+                        }
+                        if (isExpanded) {
+                            ExerciseCarousel(training.exercises)
                         }
                     }
                 }

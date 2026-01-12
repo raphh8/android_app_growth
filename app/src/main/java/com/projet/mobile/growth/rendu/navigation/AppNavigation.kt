@@ -1,5 +1,8 @@
 package com.projet.mobile.growth.rendu.navigation
 
+import android.R.attr.label
+import android.R.attr.onClick
+import android.net.http.SslCertificate.saveState
 import com.projet.mobile.growth.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +29,10 @@ import com.projet.mobile.growth.rendu.views.AddTrainingScreen
 import com.projet.mobile.growth.rendu.views.TrainingsScreen
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.toRoute
 import com.projet.mobile.growth.rendu.views.ExerciseDetailsScreen
 
 
@@ -40,10 +47,11 @@ import com.projet.mobile.growth.rendu.views.ExerciseDetailsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppNavigation(vm: Lazy<AppViewModel>) {
+fun AppNavigation(vm: AppViewModel) {
     val navController = rememberNavController()
-    val weekPlan by vm.value.weeklyPlan.collectAsState()
-    val trainings by vm.value.trainings.collectAsState()
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+    val weekPlan by vm.weeklyPlan.collectAsState()
+    val trainings by vm.trainings.collectAsState()
 
 
     Scaffold(
@@ -64,18 +72,39 @@ fun AppNavigation(vm: Lazy<AppViewModel>) {
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    selected = false,
+                    selected = currentDestination?.hasRoute<Home>() == true,
                     onClick = {
                         navController.navigate(Home) {
-                            popUpTo(Home) { inclusive = false }
+                            popUpTo(Home)
                             launchSingleTop = true
+                            restoreState = true
                         }
                     },
                     icon = { Icon(Icons.Default.Home, null) },
                     label = { Text("Home") }
                 )
                 NavigationBarItem(
-                    selected = false,
+                    selected = currentDestination?.hasRoute<Trainings>() == true,
+                    onClick = {
+                        navController.navigate(Trainings) {
+                            launchSingleTop = true
+                        }
+                    },
+                    icon = { Icon(Icons.Default.Create, null) },
+                    label = { Text("Trainings") }
+                )
+                NavigationBarItem(
+                    selected = currentDestination?.hasRoute<Search>() == true,
+                    onClick = {
+                        navController.navigate(Search) {
+                            launchSingleTop = true
+                        }
+                    },
+                    icon = { Icon(Icons.Default.Search, null) },
+                    label = { Text("Search") }
+                )
+                NavigationBarItem(
+                    selected = currentDestination?.hasRoute<Chrono>() == true,
                     onClick = {
                         navController.navigate(Chrono) {
                             launchSingleTop = true
@@ -88,26 +117,6 @@ fun AppNavigation(vm: Lazy<AppViewModel>) {
                         )
                     },
                     label = { Text("Chrono") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {
-                        navController.navigate(Search) {
-                            launchSingleTop = true
-                        }
-                    },
-                    icon = { Icon(Icons.Default.Search, null) },
-                    label = { Text("Search") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {
-                        navController.navigate(Trainings) {
-                            launchSingleTop = true
-                        }
-                    },
-                    icon = { Icon(Icons.Default.Create, null) },
-                    label = { Text("Trainings") }
                 )
             }
         }
@@ -122,7 +131,7 @@ fun AppNavigation(vm: Lazy<AppViewModel>) {
                 HomeScreen(
                     navController = navController,
                     weekPlan = weekPlan,
-                    onDel = { toDel, day -> vm.value.removeTrainingFromDay(toDel, day) }
+                    onDel = { toDel, day -> vm.removeTrainingFromDay(toDel, day) }
                 )
             }
 
@@ -142,33 +151,35 @@ fun AppNavigation(vm: Lazy<AppViewModel>) {
                 TrainingsScreen(
                     list = trainings,
                     navController = navController,
-                    onDelete = { toDel -> vm.value.deleteTraining(toDel) },
+                    onDelete = { toDel -> vm.deleteTraining(toDel) },
                 )
             }
 
             composable<AddTraining> {
                 AddTrainingScreen(
                     navController = navController,
-                    onSave = { vm.value.addNewTraining(it) }
+                    onSave = { vm.addNewTraining(it) }
                 )
             }
 
-            composable<AddActivity> { backStackEntry ->
+            composable<AddActivity> { entry ->
+                val args = entry.toRoute<AddActivity>()
                 AddActivityScreen(
                     list = trainings,
                     navController = navController,
                     onSave = {
-                        vm.value.addTrainingsToDay(
+                        vm.addTrainingsToDay(
                             it,
-                            backStackEntry.arguments?.getInt("day") ?: 0
+                            args.day
                         )
                     }
                 )
             }
 
-            composable<ExerciseDetails> { backStackEntry ->
+            composable<ExerciseDetails> { entry ->
+                val args = entry.toRoute<ExerciseDetails>()
                 ExerciseDetailsScreen(
-                    exerciseId = backStackEntry.arguments?.getString("id") ?: "",
+                    exerciseId = args.id,
                     navController = navController
                 )
             }

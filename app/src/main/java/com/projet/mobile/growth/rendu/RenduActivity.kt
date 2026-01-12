@@ -10,11 +10,11 @@ import com.projet.mobile.growth.rendu.viewModel.AppViewModel
 import com.projet.mobile.growth.ui.theme.GrowthTheme
 
 class RenduActivity : ComponentActivity() {
-    lateinit var vm : Lazy<AppViewModel>
+    lateinit var vm : AppViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        vm = viewModels<AppViewModel>()
+        vm = AppViewModel(application)
         setContent {
             GrowthTheme {
                 AppNavigation(vm)

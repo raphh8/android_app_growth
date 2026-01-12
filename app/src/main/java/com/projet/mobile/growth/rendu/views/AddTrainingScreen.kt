@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.ImageLoader
@@ -139,13 +138,13 @@ fun AddTrainingScreen(
                             reps <= 20 -> 1.5
                             else -> 1.0
                         }
-                        val executionTimePerSet = (reps * 3) / 60.0
+                        val executionTimePerSet = (reps * 5) / 60.0
 
                         totalTime += sets * executionTimePerSet
                         totalTime += (sets - 1) * restTimePerSet
 
                         if (index < exercises.lastIndex) {
-                            totalTime += 1.5
+                            totalTime += 3
                         }
                     }
                     if(totalTime <= 5) timeEstimation = "Moins de 5 minutes"

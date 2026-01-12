@@ -1,6 +1,7 @@
 package com.projet.mobile.growth.rendu.views
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,6 +21,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,8 +38,10 @@ fun TrainingsScreen(
     navController: NavController,
     onDelete: (trainingToDel: Training) -> Unit,
 ) {
+    val expandedMap = remember { mutableStateMapOf<String, Boolean>() }
+
     Scaffold (
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 navController.navigate(AddTraining)
@@ -43,25 +51,59 @@ fun TrainingsScreen(
             }
         }
     ) { innerPadding ->
+        Text(
+            text = "Mes séances",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.height(10.dp))
         LazyColumn(Modifier.padding(innerPadding)) {
-        items(count = list.count()){
-            index->
-            Column {
-                Row (modifier = Modifier.fillMaxWidth().border(1.dp, MaterialTheme.colorScheme.secondary).padding(10.dp)){
-                    Column(modifier = Modifier.fillMaxWidth(0.7f)) {
-                        Text(fontSize = 20.sp, text = list[index].title )
-                        Spacer(Modifier.height(10.dp))
-                        Text(fontSize = 20.sp, text = list[index].timeEstimation)
+            items(count = list.count()) { index ->
+                val isExpanded = expandedMap[list[index].id] ?: false
+                Column(
+                    modifier = Modifier
+                    .border(1.dp, MaterialTheme.colorScheme.secondary)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier) {
+                            Text(fontSize = 20.sp, text = list[index].title)
+                            Spacer(Modifier.height(10.dp))
+                            Text(
+                                fontSize = 20.sp,
+                                text = list[index].exercises.size.toString() + " exercices - " + list[index].timeEstimation
+                            )
+                        }
+                        IconButton(
+                            modifier = Modifier,
+                            onClick = {
+                                onDelete(list[index])
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete"
+                            )
+                        }
                     }
-                    IconButton(onClick = {
-                        onDelete(list[index])
-                    }) {
-                        Icon(imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete")
+                    FilledTonalButton(
+                        modifier = Modifier.padding(4.dp),
+                        onClick = {
+                            expandedMap[list[index].id] = !isExpanded
+                        }
+                    ) {
+                        Text(if(isExpanded) "Cacher" else "Voir plus")
                     }
-                } }
+                    if (isExpanded) {
+                        ExerciseCarousel(list[index].exercises)
+                    }
+                }
+            }
         }
     }
-
-}
 }
