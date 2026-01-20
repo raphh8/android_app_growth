@@ -1,11 +1,14 @@
 package com.projet.mobile.growth.rendu.navigation
 
+import android.app.Activity
+import android.content.Intent
 import com.projet.mobile.growth.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,10 +29,13 @@ import com.projet.mobile.growth.rendu.views.AddTrainingScreen
 import com.projet.mobile.growth.rendu.views.TrainingsScreen
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
+import com.projet.mobile.growth.MainActivity
 import com.projet.mobile.growth.rendu.views.ExerciseDetailsScreen
+import com.projet.mobile.growth.tp2.ComposeActivity
 
 
 @Serializable data object Home : NavKey
@@ -44,6 +50,7 @@ import com.projet.mobile.growth.rendu.views.ExerciseDetailsScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation(vm: AppViewModel) {
+    val context = LocalContext.current
     val navController = rememberNavController()
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val weekPlan by vm.weeklyPlan.collectAsState()
@@ -61,6 +68,17 @@ fun AppNavigation(vm: AppViewModel) {
                         )
                         Spacer(Modifier.width(8.dp))
                         Text("Growth")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        val intent = Intent(context, ComposeActivity::class.java)
+                        context.startActivity(intent)
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "go to classic app"
+                        )
                     }
                 }
             )
