@@ -65,6 +65,7 @@ class AppViewModel(
         viewModelScope.launch {
             repository.removeTrainingFromDay(training, day)
             _weeklyPlan.value = repository.getWeeklyPlan()
+            NotificationScheduler.scheduleNotifications(getApplication(), _weeklyPlan.value)
         }
     }
 }

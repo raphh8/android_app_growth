@@ -1,8 +1,5 @@
 package com.projet.mobile.growth.rendu.navigation
 
-import android.R.attr.label
-import android.R.attr.onClick
-import android.net.http.SslCertificate.saveState
 import com.projet.mobile.growth.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +27,6 @@ import com.projet.mobile.growth.rendu.views.TrainingsScreen
 import kotlinx.serialization.Serializable
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
 import com.projet.mobile.growth.rendu.views.ExerciseDetailsScreen

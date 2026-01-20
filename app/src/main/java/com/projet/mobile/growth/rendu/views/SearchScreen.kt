@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,8 @@ fun SearchScreen(
     var query by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<Exercise>?>(emptyList()) }
     var searchQuery by remember { mutableStateOf("") }
+    var filteredSearch by rememberSaveable { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -62,6 +65,28 @@ fun SearchScreen(
                 }
             },
         )
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = {
+            filteredSearch = !filteredSearch
+        }) {
+            Text(if(!filteredSearch) "Recherche avancée" else "Moins")
+        }
+        if (filteredSearch) {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("TODO muscles ciblés")
+                    Spacer(Modifier.height(4.dp))
+                    Text("TODO équipements")
+                    Spacer(Modifier.height(4.dp))
+                    Text("TODO parties du corps")
+                    Spacer(Modifier.height(4.dp))
+                }
+            }
+        }
         LaunchedEffect(searchQuery) {
             if (searchQuery.isNotEmpty()) {
                 val response = ExerciseAPI.exerciseWebService.fetchSearchResults(searchQuery)

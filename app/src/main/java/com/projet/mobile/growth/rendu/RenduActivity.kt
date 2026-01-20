@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import com.projet.mobile.growth.rendu.navigation.AppNavigation
 import com.projet.mobile.growth.rendu.viewModel.AppViewModel
 import com.projet.mobile.growth.ui.theme.GrowthTheme
