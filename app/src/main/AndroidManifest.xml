@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".tp2.ComposeActivity"
+            android:name=".tp2and3.ComposeActivity"
             android:exported="true"
             android:theme="@style/Theme.Growth">
         </activity>

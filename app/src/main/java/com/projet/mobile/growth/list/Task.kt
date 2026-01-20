@@ -6,7 +6,7 @@ import java.io.Serializable
 data class Task(
     @SerialName("id")
     val id: String,
-    @SerialName("title")
+    @SerialName("content")
     var title: String,
     @SerialName("description")
     var description: String? = "You can add your own description!"

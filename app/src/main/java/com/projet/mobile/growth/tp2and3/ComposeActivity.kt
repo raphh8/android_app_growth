@@ -1,4 +1,4 @@
-package com.projet.mobile.growth.tp2
+package com.projet.mobile.growth.tp2and3
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,20 +41,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
 import com.projet.mobile.growth.MainActivity
 import com.projet.mobile.growth.data.api
 import com.projet.mobile.growth.list.Task
 import com.projet.mobile.growth.ui.theme.GrowthTheme
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import java.util.Map.entry
 import java.util.UUID
+import kotlin.collections.plus
+
+@Serializable
+data object ListNavScreen : NavKey
+@Serializable
+data class DetailNavScreen(val task: Task) : NavKey
 
 class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             GrowthTheme {
-                ListScreen()
+                App()
             }
         }
     }
@@ -61,36 +78,33 @@ class ComposeActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListScreen(modifier: Modifier = Modifier) {
+fun App() {
+    // on créé notre historique de navigation avec la liste comme écran initial
+    val backStack = rememberNavBackStack(ListNavScreen)
     val context = LocalContext.current
-    val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
-
-    var items by remember {
-        mutableStateOf(List(100) {
-            Task(id = UUID.randomUUID().toString(), title = "Item #$it")
-        })
-    }
-    var userName by remember { mutableStateOf("Loading user...") }
-
-    LaunchedEffect(Unit) {
-        try {
-            val response = api.userWebService.fetchUser()
-            if (response.isSuccessful) {
-                userName = response.body()?.name ?: "User name not found"
-            } else {
-                userName = "Error: ${response.code()}"
-            }
-        } catch (e: Exception) {
-            userName = "Error: ${e.message}"
-        }
-    }
+    val vm: TaskListViewModel = viewModel()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("To Do List") },
+                title = {
+                    var userName by remember { mutableStateOf("Loading user...") }
+
+                    LaunchedEffect(Unit) {
+                        try {
+                            val response = api.userWebService.fetchUser()
+                            if (response.isSuccessful) {
+                                userName = response.body()?.name ?: "User name not found"
+                            } else {
+                                userName = "Error: ${response.code()}"
+                            }
+                        } catch (e: Exception) {
+                            userName = "Error: ${e.message}"
+                        }
+                    }
+                    Text("To Do List of $userName")
+                },
                 actions = {
                     IconButton(onClick = {
                         val intent = Intent(context, MainActivity::class.java)
@@ -102,61 +116,40 @@ fun ListScreen(modifier: Modifier = Modifier) {
                         )
                     }
                 }
-            ) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val newItem = Task(id = UUID.randomUUID().toString(), title = "Item #${items.size}")
-                    items = items + newItem
-                    coroutineScope.launch { listState.animateScrollToItem(index = items.size - 1) }
-                },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.secondary
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-            }
+            )
         }
     ) { paddingValues ->
-        Column(
-            modifier = modifier
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
         ) {
-            Text(
-                text = userName,
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(16.dp)
-            )
-            LazyColumn(
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp)
-            ) {
-                items(items) { task ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(text = task.title, color = MaterialTheme.colorScheme.primary)
-                            Text(text = task.description!!, color = MaterialTheme.colorScheme.secondary)
-                        }
-                        IconButton(onClick = {
-                            items = items.filter { it.id != task.id }
-                        }) {
-                            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.primary)
-                        }
+            NavDisplay(
+                backStack = backStack,
+                entryDecorators = listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator()
+                ),
+                entryProvider = entryProvider {
+                    entry<ListNavScreen> {
+                        ListScreen(
+                            vm = vm,
+                            modifier = Modifier,
+                            onClickItem = { task -> backStack.add(DetailNavScreen(task)) },
+                            onAddTask = { task -> vm.add(task) },
+                            onDeleteTask = { task -> vm.remove(task) }
+                        )
+                    }
+                    entry<DetailNavScreen> { key ->
+                        DetailsScreen(
+                            task = key.task,
+                            onEditTask = { task -> vm.edit(task) },
+                            onReturn = { backStack.removeLastOrNull() }
+                        )
                     }
                 }
-            }
+            )
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ListPreview() {
-    ListScreen()
-}

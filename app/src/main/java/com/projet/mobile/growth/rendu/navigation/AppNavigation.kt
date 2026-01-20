@@ -1,6 +1,5 @@
 package com.projet.mobile.growth.rendu.navigation
 
-import android.app.Activity
 import android.content.Intent
 import com.projet.mobile.growth.R
 import androidx.compose.foundation.layout.Row
@@ -33,9 +32,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
-import com.projet.mobile.growth.MainActivity
 import com.projet.mobile.growth.rendu.views.ExerciseDetailsScreen
-import com.projet.mobile.growth.tp2.ComposeActivity
+import com.projet.mobile.growth.tp2and3.ComposeActivity
 
 
 @Serializable data object Home : NavKey
