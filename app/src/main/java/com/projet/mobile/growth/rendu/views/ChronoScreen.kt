@@ -53,7 +53,7 @@ fun ChronoScreen() {
     ) {
 
         Text(
-            text = "Chronomètre",
+            text = "Minuteur",
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )

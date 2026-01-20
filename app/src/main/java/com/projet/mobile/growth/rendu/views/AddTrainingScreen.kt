@@ -90,10 +90,12 @@ fun AddTrainingScreen(
                 ExerciseConfigDialog(
                     title = selectedExercise!!.name,
                     onDismiss = { showDialog = false },
-                    onConfirm = { reps, sets, weight ->
+                    onConfirm = { reps, sets, weight, duration, distance ->
                         selectedExercise!!.repNumber = reps
                         selectedExercise!!.setNumber = sets
                         selectedExercise!!.weight = weight
+                        selectedExercise!!.duration = duration
+                        selectedExercise!!.distance = distance
                         exercises = exercises + selectedExercise!!
                         showDialog = false
                         showExerciseBottomSheet = false

@@ -60,52 +60,22 @@ fun ExerciseDetailsScreen(
                         style = MaterialTheme.typography.headlineMedium
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Muscles:",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = details!!.muscles?.joinToString(", ") ?: "",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Body Parts:",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = details!!.bodyParts?.joinToString(", ") ?: "",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Equipments:",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = details!!.equipments?.joinToString(", ") ?: "",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Secondary Muscles:",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = details!!.secondaryMuscles?.joinToString(", ") ?: "",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Instructions:",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = details!!.instructions?.joinToString("\n") ?: "",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    DetailSection("Muscles", details!!.muscles?.joinToString(", "))
+                    DetailSection("Body Parts", details!!.bodyParts?.joinToString(", "))
+                    DetailSection("Equipments", details!!.equipments?.joinToString(", "))
+                    DetailSection("Secondary Muscles", details!!.secondaryMuscles?.joinToString(", "))
+                    DetailSection("Instructions", details!!.instructions?.joinToString("\n"))
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DetailSection(title: String, content: String?) {
+    if (!content.isNullOrBlank()) {
+        Text(text = title, style = MaterialTheme.typography.titleMedium)
+        Text(text = content, style = MaterialTheme.typography.bodyMedium)
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }

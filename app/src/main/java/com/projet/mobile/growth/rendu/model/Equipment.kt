@@ -1,0 +1,33 @@
+package com.projet.mobile.growth.rendu.model
+
+enum class Equipment(val displayName: String) {
+    STEPMILL_MACHINE("stepmill machine"),
+    ELLIPTICAL_MACHINE("elliptical machine"),
+    TRAP_BAR("trap bar"),
+    TIRE("tire"),
+    STATIONARY_BIKE("stationary bike"),
+    WHEEL_ROLLER("wheel roller"),
+    SMITH_MACHINE("smith machine"),
+    HAMMER("hammer"),
+    SKIERG_MACHINE("skierg machine"),
+    ROLLER("roller"),
+    RESISTANCE_BAND("resistance band"),
+    BOSU_BALL("bosu ball"),
+    WEIGHTED("weighted"),
+    OLYMPIC_BARBELL("olympic barbell"),
+    KETTLEBELL("kettlebell"),
+    UPPER_BODY_ERGOMETER("upper body ergometer"),
+    SLED_MACHINE("sled machine"),
+    EZ_BARBELL("ez barbell"),
+    DUMBELL("dumbbell"),
+    ROPE("rope"),
+    BARBELL("barbell"),
+    BAND("band"),
+    STABILITY_BALL("stability ball"),
+    MEDICINE_BALL("medicine ball"),
+    ASSISTED("assisted"),
+    LEVERAGE_MACHINE("leverage machine"),
+    CABLE("cable"),
+    BODY_WEIGHT("body weight"),
+    NULL("")
+}

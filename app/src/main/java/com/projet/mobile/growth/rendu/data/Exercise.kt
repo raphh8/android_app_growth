@@ -23,5 +23,7 @@ data class Exercise(
     val instructions: List<String>? = null,
     var repNumber: Int? = null,
     var setNumber: Int? = null,
-    var weight: Int? = null
+    var weight: Int? = null,
+    var duration: Int? = null,
+    var distance: Float? = null
 )
