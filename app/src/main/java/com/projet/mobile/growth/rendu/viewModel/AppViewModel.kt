@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.projet.mobile.growth.rendu.data.AppDB
+import com.projet.mobile.growth.rendu.data.Exercise
 import com.projet.mobile.growth.rendu.model.Training
 import com.projet.mobile.growth.rendu.notifications.NotificationScheduler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +35,17 @@ class AppViewModel(
 
     val weeklyPlan: StateFlow<Map<Int, List<Training>>> =
         _weeklyPlan.asStateFlow()
+
+    private val _selectedExercise = MutableStateFlow<Exercise?>(null)
+    val selectedExercise = _selectedExercise.asStateFlow()
+
+    fun selectExercise(exercise: Exercise) {
+        _selectedExercise.value = exercise
+    }
+
+    fun clear() {
+        _selectedExercise.value = null
+    }
 
     init {
         viewModelScope.launch {

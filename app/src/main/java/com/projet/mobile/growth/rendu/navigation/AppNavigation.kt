@@ -53,6 +53,8 @@ fun AppNavigation(vm: AppViewModel) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val weekPlan by vm.weeklyPlan.collectAsState()
     val trainings by vm.trainings.collectAsState()
+    val exercise by vm.selectedExercise.collectAsState()
+
 
 
     Scaffold(
@@ -150,6 +152,7 @@ fun AppNavigation(vm: AppViewModel) {
             composable<Search> {
                 SearchScreen(
                     onExerciseClick = {
+                        vm.selectExercise(it)
                         navController.navigate(ExerciseDetails(it.id))
                     }
                 )
@@ -191,6 +194,7 @@ fun AppNavigation(vm: AppViewModel) {
             composable<ExerciseDetails> { entry ->
                 val args = entry.toRoute<ExerciseDetails>()
                 ExerciseDetailsScreen(
+                    exercise = exercise,
                     exerciseId = args.id,
                     navController = navController
                 )

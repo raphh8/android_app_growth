@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,15 +28,20 @@ import com.projet.mobile.growth.rendu.data.ExerciseAPI
 
 @Composable
 fun ExerciseDetailsScreen(
+    exercise : Exercise?,
     exerciseId: String,
     navController: NavController
 ) {
     var details by remember { mutableStateOf<Exercise?>(null) }
 
     LaunchedEffect(exerciseId) {
-        val response = ExerciseAPI.exerciseWebService.fetchExerciseDetails(exerciseId)
-        details = response.body()?.data
+        details = exercise ?: run {
+            val response =
+                ExerciseAPI.exerciseWebService.fetchExerciseDetails(exerciseId)
+            response.body()?.data
+        }
     }
+
     Scaffold (
         modifier = Modifier.fillMaxSize().padding(16.dp),
         floatingActionButton = {
