@@ -3,11 +3,20 @@ package com.projet.mobile.growth.rendu.views
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,32 +43,57 @@ fun AddActivityScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Quelle(s) activité(s) souhaitez vous ajouter à votre journée ?")
+        Text(
+            text ="Quelle(s) activité(s) souhaitez vous ajouter à votre journée ?",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
 
         list.forEach { training ->
             var checked by remember { mutableStateOf(false)}
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(training.title)
                 Checkbox(
                     checked = checked,
                     onCheckedChange = { checked = it }
                 )
+                Text(training.title, style = MaterialTheme.typography.bodyMedium)
             }
             if(checked) {
                 activities = activities + training
             }
         }
 
-        Button(
-            onClick = {
-                onSave(activities)
-                navController.popBackStack()
-            },
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
         ) {
-            Text("Valider")
+            Button(
+                onClick = {
+                    onSave(activities)
+                    navController.popBackStack()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Valider")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Retour")
+            }
         }
+
     }
 }

@@ -1,8 +1,10 @@
 package com.projet.mobile.growth.rendu.views
 
+import android.annotation.SuppressLint
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTrainingScreen(
@@ -64,7 +67,7 @@ fun AddTrainingScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Button(onClick = {
+            ElevatedButton(onClick = {
                 showExerciseBottomSheet = true
             }) {
                 Text("Ajouter un exercice")
@@ -133,49 +136,67 @@ fun AddTrainingScreen(
                 }
             }
 
-            Button(
-                onClick = {
-                    if (exercises.isEmpty()) {
-                        scope.launch {
-                            snackbarHostState.showSnackbar("Ajoutez au moins un exercice")
-                        }
-                        return@Button
-                    } else {
-                        var totalTime = 0.0
-                        exercises.forEachIndexed { index, exercise ->
-                            val reps = exercise.repNumber!!
-                            val sets = exercise.setNumber!!
-                            val restTimePerSet = when {
-                                reps <= 6 -> 3.0
-                                reps <= 12 -> 2.0
-                                reps <= 20 -> 1.5
-                                else -> 1.0
-                            }
-                            val executionTimePerSet = (reps * 5) / 60.0
-
-                            totalTime += sets * executionTimePerSet
-                            totalTime += (sets - 1) * restTimePerSet
-
-                            if (index < exercises.lastIndex) {
-                                totalTime += 3
-                            }
-                        }
-                        if (totalTime <= 5) timeEstimation = "Moins de 5 minutes"
-                        else {
-                            totalTime -= (totalTime % 5)
-                            timeEstimation = "Environ ${totalTime.toInt()} minutes"
-                        }
-
-                    }
-                    if (title == "") title = "Séance"
-
-                    val newTraining = Training(UUID.randomUUID().toString(), title, timeEstimation, exercises)
-                    onSave(newTraining)
-                    navController.popBackStack()
-                },
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
             ) {
-                Text("Valider")
+                Button(
+                    onClick = {
+                        if (exercises.isEmpty()) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Ajoutez au moins un exercice")
+                            }
+                            return@Button
+                        } else {
+                            var totalTime = 0.0
+                            exercises.forEachIndexed { index, exercise ->
+                                val reps = exercise.repNumber!!
+                                val sets = exercise.setNumber!!
+                                val restTimePerSet = when {
+                                    reps <= 6 -> 3.0
+                                    reps <= 12 -> 2.0
+                                    reps <= 20 -> 1.5
+                                    else -> 1.0
+                                }
+                                val executionTimePerSet = (reps * 5) / 60.0
+
+                                totalTime += sets * executionTimePerSet
+                                totalTime += (sets - 1) * restTimePerSet
+
+                                if (index < exercises.lastIndex) {
+                                    totalTime += 3
+                                }
+                            }
+                            if (totalTime <= 5) timeEstimation = "Moins de 5 minutes"
+                            else {
+                                totalTime -= (totalTime % 5)
+                                timeEstimation = "Environ ${totalTime.toInt()} minutes"
+                            }
+
+                        }
+                        if (title == "") title = "Séance"
+
+                        val newTraining = Training(UUID.randomUUID().toString(), title, timeEstimation, exercises)
+                        onSave(newTraining)
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "check"
+                    )
+                    Text("Valider")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Retour")
+                }
             }
         }
     }

@@ -89,7 +89,7 @@ fun SearchScreen(
     ) {
         Text(
             text = "Recherche d'exercice",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(24.dp))

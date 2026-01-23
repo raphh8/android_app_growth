@@ -35,7 +35,6 @@ fun HomeScreen(
         itemsIndexed(weeks) { weekIndex, weekName ->
             Card(
                 shape = RoundedCornerShape(12.dp),
-                //elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(

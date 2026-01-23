@@ -22,11 +22,11 @@ import kotlin.math.sin
 @Composable
 fun ChronoScreen() {
     var inputSeconds by remember { mutableStateOf("30") }
-    var durationMillis by remember { mutableStateOf(30_000L) }
-    var currentTime by remember { mutableStateOf(0L) }
+    var durationMillis by remember { mutableLongStateOf(30_000L) }
+    var currentTime by remember { mutableLongStateOf(0L) }
     var isRunning by remember { mutableStateOf(false) }
     var isPaused by remember { mutableStateOf(false) }
-    var value by remember { mutableStateOf(1f) }
+    var value by remember { mutableFloatStateOf(1f) }
 
     LaunchedEffect(isRunning, isPaused) {
         while (isRunning && !isPaused && currentTime > 0) {
@@ -54,7 +54,7 @@ fun ChronoScreen() {
 
         Text(
             text = "Minuteur",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
 
